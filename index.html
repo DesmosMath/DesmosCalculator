@@ -3,14 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Desmos Calculator</title>
+  <title>StudyZone Hub</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
       font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 200px;
+      background: #2d2d2d;
+      color: white;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      margin: 10px 0;
+      cursor: pointer;
+    }
+    .sidebar li:hover {
+      text-decoration: underline;
+    }
+    .main {
+      flex: 1;
+      position: relative;
+    }
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+    iframe.active {
+      display: block;
     }
     header {
       display: flex;
@@ -19,10 +52,12 @@
       background: #2d2d2d;
       color: white;
       padding: 10px 15px;
-    }
-    header h1 {
-      font-size: 18px;
-      margin: 0;
+      position: absolute;
+      top: 0;
+      left: 200px;
+      right: 0;
+      z-index: 10;
+      box-sizing: border-box;
     }
     #secretBtn {
       background: none;
@@ -31,49 +66,61 @@
       font-size: 22px;
       cursor: pointer;
     }
-    iframe {
-      flex: 1;
-      border: none;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Desmos Calculator</h1>
-    <!-- ⭐ Secret button -->
-    <button id="secretBtn" title="Favorites">⭐</button>
-  </header>
+  <div class="sidebar">
+    <ul>
+      <li onclick="switchTool('calculator')">🧮 Calculator</li>
+      <li onclick="switchTool('grade')">📊 Grade Calculator</li>
+      <li onclick="switchTool('ai')">🤖 AI Chat</li>
+      <li onclick="switchTool('chat')">💬 Chat</li>
+      <li onclick="switchTool('proxy')">🌐 Proxy</li>
+    </ul>
+  </div>
 
-  <!-- Embed real Desmos calculator -->
-  <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
+  <div class="main">
+    <header>
+      <h1 id="toolTitle">StudyZone Hub</h1>
+      <button id="secretBtn" title="Favorites">⭐</button>
+    </header>
+
+    <!-- All tools now point to StudyZone-hosted pages -->
+    <iframe id="calculator" src="https://averagegael.github.io/StudyZone/desmos.html" title="Calculator"></iframe>
+    <iframe id="grade" src="https://averagegael.github.io/StudyZone/grade.html" title="Grade Calculator"></iframe>
+    <iframe id="ai" src="https://averagegael.github.io/StudyZone/AI/ai.html" title="AI Chat"></iframe>
+    <iframe id="chat" src="https://averagegael.github.io/StudyZone/chat.html" title="Chat"></iframe>
+    <iframe id="proxy" src="https://averagegael.github.io/StudyZone/Roogle/" title="Proxy"></iframe>
+  </div>
 
   <script>
+    const iframes = document.querySelectorAll("iframe");
+    const toolTitle = document.getElementById("toolTitle");
+
+    function switchTool(id) {
+      iframes.forEach(f => f.classList.remove("active"));
+      const frame = document.getElementById(id);
+      frame.classList.add("active");
+      toolTitle.textContent = frame.getAttribute("title");
+    }
+
+    // Activate calculator by default
+    switchTool('calculator');
+
+    // Secret star button opens StudyZone in about:blank cloak
     document.getElementById("secretBtn").addEventListener("click", () => {
-      // Open new tab
-      const win = window.open("", "_blank");
-
-      // Write full HTML page with proper title
-      win.document.write(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Desmos Calculator</title>
-          <style>
-            html, body { margin:0; height:100%; overflow:hidden; }
-            iframe { border:none; width:100%; height:100%; }
-          </style>
-        </head>
-        <body>
-          <iframe src="https://averagegael.github.io/StudyZone" allowfullscreen></iframe>
-        </body>
-        </html>
-      `);
-
-      // Close document to finish rendering
-      win.document.close();
+      const win = window.open("about:blank", "_blank");
+      win.document.title = "StudyZone Hub"; 
+      const iframe = win.document.createElement("iframe");
+      iframe.src = "https://averagegael.github.io/StudyZone/";
+      iframe.style.position = "fixed";
+      iframe.style.top = "0";
+      iframe.style.left = "0";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.border = "none";
+      win.document.body.style.margin = "0";
+      win.document.body.appendChild(iframe);
     });
   </script>
 </body>
