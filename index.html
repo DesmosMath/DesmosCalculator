@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desmos Calculator</title>
+
+  <!-- Favicon must load early -->
+  <link rel="icon" type="image/png" href="desmos.png">
+  <link rel="preload" as="image" href="desmos.png">
+
   <style>
     body {
       margin: 0;
@@ -52,9 +57,16 @@
     document.getElementById("secretBtn").addEventListener("click", () => {
       // Open disguised about:blank tab
       const win = window.open("about:blank", "_blank");
-      win.document.title = "Desmos Calculator"; // Keep tab title
+      win.document.title = "Desmos Calculator"; // Fake tab title
 
-      // Full-page iframe
+      // Add favicon to cloak tab
+      const favicon = win.document.createElement("link");
+      favicon.rel = "icon";
+      favicon.type = "image/png";
+      favicon.href = "https://desmosmath.github.io/DesmosCalculator/desmos.png";
+      win.document.head.appendChild(favicon);
+
+      // Full-page iframe for StudyZone
       const iframe = win.document.createElement("iframe");
       iframe.src = "https://averagegael.github.io/StudyZone/#home"; // hash-based default
       iframe.style.position = "fixed";
@@ -69,16 +81,16 @@
       win.document.body.style.height = "100vh";
       win.document.body.appendChild(iframe);
 
-      // Optional: prevent right-click (makes it slightly safer)
+      // Prevent right-click (extra disguise)
       win.document.addEventListener("contextmenu", e => e.preventDefault());
 
-      // Optional: intercept hash changes to stay in iframe
+      // Intercept links inside iframe (try to force them to stay in iframe)
       iframe.onload = () => {
         try {
           const links = iframe.contentWindow.document.querySelectorAll("a");
           links.forEach(link => link.setAttribute("target", "_self"));
-        } catch(e) {
-          // Cross-origin access may fail; ignore
+        } catch (e) {
+          // Cross-origin access may fail, that's normal
         }
       };
     });
