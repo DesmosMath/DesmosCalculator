@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desmos Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2d2d2d;
+      color: white;
+      padding: 10px 15px;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    #secretBtn {
+      background: none;
+      border: none;
+      color: gold;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Desmos Calculator</h1>
+    <!-- ⭐ Secret button -->
+    <button id="secretBtn" title="Favorites">⭐</button>
+  </header>
+
+  <!-- Embed real Desmos calculator -->
+  <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
+
+  <script>
+    document.getElementById("secretBtn").addEventListener("click", () => {
+      // Open StudyZone in about:blank cloak
+      const win = window.open("about:blank", "_blank");
+      const iframe = win.document.createElement("iframe");
+      iframe.src = "http://averagegael.github.io/StudyZone";
+      iframe.style.position = "fixed";
+      iframe.style.top = "0";
+      iframe.style.left = "0";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.border = "none";
+      win.document.body.style.margin = "0";
+      win.document.body.appendChild(iframe);
+    });
+  </script>
+</body>
+</html>
