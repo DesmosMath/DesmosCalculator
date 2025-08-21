@@ -50,29 +50,29 @@
 
   <script>
     document.getElementById("secretBtn").addEventListener("click", () => {
-      // Open a new tab/window
+      // Open new tab
       const win = window.open("", "_blank");
 
-      // Give it a blank HTML structure immediately
+      // Write full HTML page with proper title
       win.document.write(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>StudyZone</title>
+          <title>Desmos Calculator</title>
           <style>
             html, body { margin:0; height:100%; overflow:hidden; }
             iframe { border:none; width:100%; height:100%; }
           </style>
         </head>
         <body>
-          <iframe src="http://averagegael.github.io/StudyZone" allowfullscreen></iframe>
+          <iframe src="https://averagegael.github.io/StudyZone" allowfullscreen></iframe>
         </body>
         </html>
       `);
 
-      // Close the document to render immediately
+      // Close document to finish rendering
       win.document.close();
     });
   </script>
