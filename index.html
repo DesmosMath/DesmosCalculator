@@ -55,38 +55,37 @@
 
   <script>
     document.getElementById("secretBtn").addEventListener("click", () => {
-      // Open disguised about:blank tab
+      // Open about:blank
       const win = window.open("about:blank", "_blank");
 
-      // Keep original Desmos tab title and favicon
+      // Set default title and favicon from Desmos
       win.document.title = document.title;
       const originalFavicon = document.querySelector("link[rel*='icon']");
       if(originalFavicon){
         const link = win.document.createElement("link");
-        link.rel = 'icon';
+        link.rel = "icon";
         link.type = originalFavicon.type || 'image/png';
         link.href = originalFavicon.href;
         win.document.head.appendChild(link);
       }
 
-      // Full-page iframe for StudyZone
-      const iframe = win.document.createElement("iframe");
-      iframe.src = "https://averagegael.github.io/StudyZone/#home"; // default StudyZone
-
-      // Pull TabCloaker settings from localStorage
+      // Immediately override with TabCloaker settings if available
       const savedTitle = localStorage.getItem("fakeTitle");
       const savedFavicon = localStorage.getItem("fakeFavicon");
-      if(savedTitle) iframe.onload = () => win.document.title = savedTitle;
-      if(savedFavicon) iframe.onload = () => {
+      if(savedTitle) win.document.title = savedTitle;
+      if(savedFavicon){
         let link = win.document.querySelector("link[rel*='icon']");
-        if (!link) {
-          link = win.document.createElement('link');
-          link.rel = 'icon';
+        if(!link){
+          link = win.document.createElement("link");
+          link.rel = "icon";
           win.document.head.appendChild(link);
         }
         link.href = savedFavicon;
-      };
+      }
 
+      // Create full-page iframe for StudyZone
+      const iframe = win.document.createElement("iframe");
+      iframe.src = "https://averagegael.github.io/StudyZone/#home"; 
       iframe.style.position = "fixed";
       iframe.style.top = "0";
       iframe.style.left = "0";
@@ -99,16 +98,8 @@
       win.document.body.style.height = "100vh";
       win.document.body.appendChild(iframe);
 
-      // Prevent right-click (extra disguise)
+      // Extra disguise: prevent right-click
       win.document.addEventListener("contextmenu", e => e.preventDefault());
-
-      // Intercept links inside iframe
-      iframe.onload = () => {
-        try {
-          const links = iframe.contentWindow.document.querySelectorAll("a");
-          links.forEach(link => link.setAttribute("target", "_self"));
-        } catch (e) {}
-      };
     });
   </script>
 </body>
