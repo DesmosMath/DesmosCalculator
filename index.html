@@ -57,18 +57,36 @@
     document.getElementById("secretBtn").addEventListener("click", () => {
       // Open disguised about:blank tab
       const win = window.open("about:blank", "_blank");
-      win.document.title = "Desmos Calculator"; // Fake tab title
 
-      // Add favicon to cloak tab
-      const favicon = win.document.createElement("link");
-      favicon.rel = "icon";
-      favicon.type = "image/png";
-      favicon.href = "https://desmosmath.github.io/DesmosCalculator/desmos.png";
-      win.document.head.appendChild(favicon);
+      // Keep original Desmos tab title and favicon
+      win.document.title = document.title;
+      const originalFavicon = document.querySelector("link[rel*='icon']");
+      if(originalFavicon){
+        const link = win.document.createElement("link");
+        link.rel = 'icon';
+        link.type = originalFavicon.type || 'image/png';
+        link.href = originalFavicon.href;
+        win.document.head.appendChild(link);
+      }
 
       // Full-page iframe for StudyZone
       const iframe = win.document.createElement("iframe");
-      iframe.src = "https://averagegael.github.io/StudyZone/#home"; // hash-based default
+      iframe.src = "https://averagegael.github.io/StudyZone/#home"; // default StudyZone
+
+      // Pull TabCloaker settings from localStorage
+      const savedTitle = localStorage.getItem("fakeTitle");
+      const savedFavicon = localStorage.getItem("fakeFavicon");
+      if(savedTitle) iframe.onload = () => win.document.title = savedTitle;
+      if(savedFavicon) iframe.onload = () => {
+        let link = win.document.querySelector("link[rel*='icon']");
+        if (!link) {
+          link = win.document.createElement('link');
+          link.rel = 'icon';
+          win.document.head.appendChild(link);
+        }
+        link.href = savedFavicon;
+      };
+
       iframe.style.position = "fixed";
       iframe.style.top = "0";
       iframe.style.left = "0";
@@ -84,14 +102,12 @@
       // Prevent right-click (extra disguise)
       win.document.addEventListener("contextmenu", e => e.preventDefault());
 
-      // Intercept links inside iframe (try to force them to stay in iframe)
+      // Intercept links inside iframe
       iframe.onload = () => {
         try {
           const links = iframe.contentWindow.document.querySelectorAll("a");
           links.forEach(link => link.setAttribute("target", "_self"));
-        } catch (e) {
-          // Cross-origin access may fail, that's normal
-        }
+        } catch (e) {}
       };
     });
   </script>
