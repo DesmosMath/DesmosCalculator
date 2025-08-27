@@ -54,14 +54,39 @@
   <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
 
   <script>
+    // --- Tab Cloaker Settings ---
+    function setTabCloak(title, favicon) {
+      if (title) localStorage.setItem("fakeTitle", title);
+      if (favicon) localStorage.setItem("fakeFavicon", favicon);
+    }
+
+    function applyTabCloak(winDoc) {
+      const savedTitle = localStorage.getItem("fakeTitle");
+      const savedFavicon = localStorage.getItem("fakeFavicon");
+
+      // Title
+      if (savedTitle) winDoc.title = savedTitle;
+
+      // Favicon
+      if (savedFavicon) {
+        let link = winDoc.querySelector("link[rel*='icon']");
+        if (!link) {
+          link = winDoc.createElement("link");
+          link.rel = "icon";
+          winDoc.head.appendChild(link);
+        }
+        link.href = savedFavicon;
+      }
+    }
+
     document.getElementById("secretBtn").addEventListener("click", () => {
       // Open about:blank
       const win = window.open("about:blank", "_blank");
 
-      // Set default title and favicon from Desmos
+      // Load default Desmos title & favicon first
       win.document.title = document.title;
       const originalFavicon = document.querySelector("link[rel*='icon']");
-      if(originalFavicon){
+      if (originalFavicon) {
         const link = win.document.createElement("link");
         link.rel = "icon";
         link.type = originalFavicon.type || 'image/png';
@@ -69,19 +94,8 @@
         win.document.head.appendChild(link);
       }
 
-      // Immediately override with TabCloaker settings if available
-      const savedTitle = localStorage.getItem("fakeTitle");
-      const savedFavicon = localStorage.getItem("fakeFavicon");
-      if(savedTitle) win.document.title = savedTitle;
-      if(savedFavicon){
-        let link = win.document.querySelector("link[rel*='icon']");
-        if(!link){
-          link = win.document.createElement("link");
-          link.rel = "icon";
-          win.document.head.appendChild(link);
-        }
-        link.href = savedFavicon;
-      }
+      // Override with saved cloaks if they exist
+      applyTabCloak(win.document);
 
       // Create full-page iframe for StudyZone
       const iframe = win.document.createElement("iframe");
