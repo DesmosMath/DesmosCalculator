@@ -47,37 +47,36 @@
   <header>
     <h1>Desmos Calculator</h1>
     <!-- ⭐ Secret button -->
-    <button id="secretBtn" title="Favorites">⭐</button>
+    <button id="secretBtn" title="Open Cloaked Tab">⭐</button>
   </header>
 
   <!-- Embed real Desmos calculator -->
   <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
 
   <script>
-    function applyTabCloak(winDoc) {
+    // Apply cloak on THIS page immediately
+    (function applyTabCloak() {
       const savedTitle = localStorage.getItem("fakeTitle");
       const savedFavicon = localStorage.getItem("fakeFavicon");
 
-      // Title
-      if (savedTitle) winDoc.title = savedTitle;
+      if (savedTitle) document.title = savedTitle;
 
-      // Favicon
       if (savedFavicon) {
-        let link = winDoc.querySelector("link[rel*='icon']");
+        let link = document.querySelector("link[rel*='icon']");
         if (!link) {
-          link = winDoc.createElement("link");
+          link = document.createElement("link");
           link.rel = "icon";
-          winDoc.head.appendChild(link);
+          document.head.appendChild(link);
         }
-        link.href = savedFavicon; // ✅ Supports normal URLs + Data URLs
+        link.href = savedFavicon;
       }
-    }
+    })();
 
+    // Gold ⭐ button → opens cloaked StudyZone in new tab
     document.getElementById("secretBtn").addEventListener("click", () => {
       const savedTitle = localStorage.getItem("fakeTitle") || "StudyZone";
       const savedFavicon = localStorage.getItem("fakeFavicon") || "desmos.png";
 
-      // Build hybrid data URL HTML
       const html = `
         <!DOCTYPE html>
         <html lang="en">
@@ -92,14 +91,12 @@
         </head>
         <body>
           <iframe src="https://averagegael.github.io/StudyZone/#home"></iframe>
-          <script>
-            document.addEventListener("contextmenu", e => e.preventDefault());
-          </script>
+          <script>document.addEventListener("contextmenu", e => e.preventDefault());</script>
         </body>
         </html>
       `;
 
-      // Convert HTML to Data URL
+      // Encode safely into Data URL
       const dataURL = "data:text/html;base64," + btoa(unescape(encodeURIComponent(html)));
       window.open(dataURL, "_blank");
     });
