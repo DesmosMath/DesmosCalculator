@@ -46,21 +46,17 @@
 <body>
   <header>
     <h1>Desmos Calculator</h1>
-    <!-- ⭐ Secret button -->
     <button id="secretBtn" title="Open Cloaked Tab">⭐</button>
   </header>
 
-  <!-- Embed real Desmos calculator -->
   <iframe src="https://www.desmos.com/calculator" allowfullscreen></iframe>
 
   <script>
-    // Apply cloak on THIS page immediately
+    // Apply TabCloaker on THIS page if saved
     (function applyTabCloak() {
       const savedTitle = localStorage.getItem("fakeTitle");
       const savedFavicon = localStorage.getItem("fakeFavicon");
-
       if (savedTitle) document.title = savedTitle;
-
       if (savedFavicon) {
         let link = document.querySelector("link[rel*='icon']");
         if (!link) {
@@ -72,10 +68,15 @@
       }
     })();
 
-    // Gold ⭐ button → opens cloaked StudyZone in new tab
+    // Secret ⭐ button
     document.getElementById("secretBtn").addEventListener("click", () => {
-      const savedTitle = localStorage.getItem("fakeTitle") || "StudyZone";
-      const savedFavicon = localStorage.getItem("fakeFavicon") || "desmos.png";
+      // Base title/fav: Desmos
+      const baseTitle = document.title || "Desmos Calculator";
+      const baseFavicon = document.querySelector("link[rel*='icon']")?.href || "desmos.png";
+
+      // Override from TabCloaker if saved
+      const savedTitle = localStorage.getItem("fakeTitle") || baseTitle;
+      const savedFavicon = localStorage.getItem("fakeFavicon") || baseFavicon;
 
       const popup = window.open("about:blank", "_blank");
       popup.document.write(`
@@ -92,7 +93,20 @@
         </head>
         <body>
           <iframe src="https://averagegael.github.io/StudyZone/#home"></iframe>
-          <script>document.addEventListener("contextmenu", e => e.preventDefault());<\/script>
+          <script>
+            // Prevent right-click
+            document.addEventListener("contextmenu", e => e.preventDefault());
+
+            // Listen for TabCloaker updates if user changes title/favicon in StudyZone
+            window.addEventListener("storage", e => {
+              if(e.key === "fakeTitle") document.title = e.newValue || "${baseTitle}";
+              if(e.key === "fakeFavicon") {
+                let link = document.querySelector("link[rel*='icon']");
+                if(!link){ link = document.createElement("link"); link.rel='icon'; document.head.appendChild(link); }
+                link.href = e.newValue || "${baseFavicon}";
+              }
+            });
+          <\/script>
         </body>
         </html>
       `);
