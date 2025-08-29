@@ -77,7 +77,8 @@
       const savedTitle = localStorage.getItem("fakeTitle") || "StudyZone";
       const savedFavicon = localStorage.getItem("fakeFavicon") || "desmos.png";
 
-      const html = `
+      const popup = window.open("about:blank", "_blank");
+      popup.document.write(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -94,12 +95,8 @@
           <script>document.addEventListener("contextmenu", e => e.preventDefault());<\/script>
         </body>
         </html>
-      `;
-
-      // Blob instead of Data URL
-      const blob = new Blob([html], { type: "text/html" });
-      const blobURL = URL.createObjectURL(blob);
-      window.open(blobURL, "_blank");
+      `);
+      popup.document.close();
     });
   </script>
 </body>
