@@ -91,14 +91,15 @@
         </head>
         <body>
           <iframe src="https://averagegael.github.io/StudyZone/#home"></iframe>
-          <script>document.addEventListener("contextmenu", e => e.preventDefault());</script>
+          <script>document.addEventListener("contextmenu", e => e.preventDefault());<\/script>
         </body>
         </html>
       `;
 
-      // Encode safely into Data URL
-      const dataURL = "data:text/html;base64," + btoa(unescape(encodeURIComponent(html)));
-      window.open(dataURL, "_blank");
+      // Blob instead of Data URL
+      const blob = new Blob([html], { type: "text/html" });
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL, "_blank");
     });
   </script>
 </body>
