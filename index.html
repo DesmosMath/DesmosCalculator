@@ -74,39 +74,34 @@
     }
 
     document.getElementById("secretBtn").addEventListener("click", () => {
-      // Open about:blank
-      const win = window.open("about:blank", "_blank");
+      const savedTitle = localStorage.getItem("fakeTitle") || "StudyZone";
+      const savedFavicon = localStorage.getItem("fakeFavicon") || "desmos.png";
 
-      // Default Desmos title & favicon first
-      win.document.title = document.title;
-      const originalFavicon = document.querySelector("link[rel*='icon']");
-      if (originalFavicon) {
-        const link = win.document.createElement("link");
-        link.rel = "icon";
-        link.type = originalFavicon.type || 'image/png';
-        link.href = originalFavicon.href;
-        win.document.head.appendChild(link);
-      }
+      // Build hybrid data URL HTML
+      const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>${savedTitle}</title>
+          <link rel="icon" href="${savedFavicon}" type="image/png">
+          <style>
+            body, html { margin:0; padding:0; height:100%; }
+            iframe { position:fixed; top:0; left:0; width:100%; height:100%; border:none; }
+          </style>
+        </head>
+        <body>
+          <iframe src="https://averagegael.github.io/StudyZone/#home"></iframe>
+          <script>
+            document.addEventListener("contextmenu", e => e.preventDefault());
+          </script>
+        </body>
+        </html>
+      `;
 
-      // Apply cloak from TabCloaker settings
-      applyTabCloak(win.document);
-
-      // Create full-page iframe for StudyZone
-      const iframe = win.document.createElement("iframe");
-      iframe.src = "https://averagegael.github.io/StudyZone/#home"; 
-      iframe.style.position = "fixed";
-      iframe.style.top = "0";
-      iframe.style.left = "0";
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      iframe.style.border = "none";
-
-      win.document.body.style.margin = "0";
-      win.document.body.style.height = "100vh";
-      win.document.body.appendChild(iframe);
-
-      // Extra disguise
-      win.document.addEventListener("contextmenu", e => e.preventDefault());
+      // Convert HTML to Data URL
+      const dataURL = "data:text/html;base64," + btoa(unescape(encodeURIComponent(html)));
+      window.open(dataURL, "_blank");
     });
   </script>
 </body>
